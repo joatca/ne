@@ -1,0 +1,13 @@
+name: ne
+version: 0.1.0
+
+authors:
+  - Fraser McCrossan <fraser@mccrossan.ca>
+
+targets:
+  ne:
+    main: src/ne.cr
+
+crystal: 0.24.2
+
+license: MIT
