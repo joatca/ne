@@ -13,9 +13,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-                                                                require "./ne/*"
+
+require "./ne/*"
 
 # TODO: Write documentation for `Ne`
 module Ne
-  # TODO: Put your code here
+  puts NodeExpr.new("foo[1-5]") + NodeExpr.new("foo[2,8,10,11]")
+  puts NodeExpr.new("foo[1,3-5,8,9,10]") - NodeExpr.new("foo[4-8]")
 end
