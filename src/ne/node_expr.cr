@@ -20,12 +20,20 @@ module Ne
 
     @nodes = Hash(String, Set(UInt32)).new { |h, prefix| h[prefix] = Set(UInt32).new }
 
+    def initialize
+    end
+
     def initialize(expr : String)
+      parse(expr)
+    end
+    
+    def parse(expr : String)
       @expr = expr
-      case expr
-      when /^([[:alpha:]]{1,9})([[:digit:]]{1,9})$/
+      if md = expr.match(/^([[:alpha:]]{1,9})([[:digit:]]{1,9})/)
         @nodes[$1] << $2.to_u32
-      when /^([[:alpha:]]{1,9})\[([-,[:digit:]]+)\]$/
+        return md
+      end
+      if md = expr.match(/^([[:alpha:]]{1,9})\[([-,[:digit:]]+)\]/)
         prefix = $1
         chunks = $2.split(',')
         chunks.each do |chunk|
@@ -40,6 +48,7 @@ module Ne
             raise ArgumentError.new("invalid expression chunk \"#{chunk}\" in \"#{expr}\"")
           end
         end
+        return md
       else
         raise ArgumentError.new("invalid node expression \"#{expr}\"")
       end
