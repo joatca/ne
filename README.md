@@ -70,8 +70,7 @@ You can output an arbitrary prefix before each group (useful with pdsh):
 $ ne -p"-w " foo[1-5] + bar[6-10]
 -w foo[1-5] -w bar[6-10]
 
-Node expressions can be read from a file, which can contain
-one or more node expressions that are implicitly unioned:
+Node expressions can be read from a file:
 
 $ echo "foo1 foo2 foo3" >nodes.txt
 $ ne @nodes.txt + foo[6-10]
