@@ -17,6 +17,7 @@
 module Ne
 
   enum Operator
+    NONE
     UNION
     DIFFERENCE
     INTERSECTION
@@ -24,19 +25,18 @@ module Ne
     
   class NEParser
 
-    CHAR_OPS = {
-      '+' => UNION,
-      '-' => DIFFERENCE,
-      '^' => INTERSECTION,
-    }
+    CHAR_OPS = [ '+', '-', '^', ' ' ]
 
-    RE_OPS = CHAR_OPS.map { |char, op| [ /\s+(#{char})\s+/, op ] }.to_h
-
-    ALL_OPS = Regex.union(RE_OPS)
-      
+    PARSE_OPS = [
+      { /^\s*\+\s*/, Operator::UNION },
+      { /^\s*-\s*/, Operator::DIFFERENCE },
+      { /^\s*\^\s*/, Operator::INTERSECTION },
+      { /^\s+/, Operator::UNION },
+    ]
+          
     def initialize
-      @ne = NodeExpr.new
-      @operator = UNION
+      @expr = NodeExpr.new
+      @operator = Operator::UNION
     end
 
     def parse(ary : Enumerable(String))
@@ -46,9 +46,38 @@ module Ne
     def parse(s : String)
       # first clean up the string to make it easier to parse - we don't have a real parser yet
       clean = s.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/\s{2,}/, " ")
-      match = @ne.parse(clean)
-      pos = 0
+      operator = Operator::UNION
+      match = @expr.parse(clean)
+      clean = match.post_match
+      while clean.size > 0
+        operator = Operator::NONE
+        PARSE_OPS.each do |op|
+          op_match = clean.match(op.first)
+          if op_match
+            clean = op_match.post_match
+            operator = op.last
+            break
+          end
+        end
+        raise ArgumentError.new("syntax error at \"#{clean}\"") if operator == Operator::NONE
+        next_expr = NodeExpr.new
+        expr_match = next_expr.parse(clean)
+        clean = expr_match.post_match
+        case operator
+        when Operator::UNION
+          @expr.add(next_expr)
+        when Operator::DIFFERENCE
+          @expr.difference(next_expr)
+        when Operator::INTERSECTION
+          @expr.intersection(next_expr)
+        end
+      end
+    end
+
+    def to_s(io : IO)
+      @expr.to_s(io)
     end
     
   end
+  
 end

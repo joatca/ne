@@ -18,6 +18,8 @@ module Ne
 
   class NodeExpr
 
+    getter nodes
+    
     @nodes = Hash(String, Set(UInt32)).new { |h, prefix| h[prefix] = Set(UInt32).new }
 
     def initialize
@@ -53,25 +55,30 @@ module Ne
         raise ArgumentError.new("invalid node expression \"#{expr}\"")
       end
     end
-
+    
     def each_group
       @nodes.each do |prefix, numbers|
         yield prefix, numbers
       end
     end
 
-    def +(other : NodeExpr)
+    def add(other : NodeExpr)
       other.each_group do |prefix, numbers|
-        numbers.each do |number|
-          @nodes[prefix] << number
-        end
+        @nodes[prefix] |= numbers
       end
       self
     end
 
-    def -(other : NodeExpr)
+    def difference(other : NodeExpr)
       other.each_group do |prefix, numbers|
         @nodes[prefix] -= numbers
+      end
+      self
+    end
+
+    def intersection(other : NodeExpr)
+      self.each_group do |prefix, numbers|
+        @nodes[prefix] &= other.nodes[prefix]
       end
       self
     end

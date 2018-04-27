@@ -18,6 +18,7 @@ require "./ne/*"
 
 # TODO: Write documentation for `Ne`
 module Ne
-  puts NodeExpr.new("foo[1-5]") + NodeExpr.new("foo[2,8,10,11]")
-  puts NodeExpr.new("foo[1,3-5,8,9,10]") - NodeExpr.new("foo[4-8]")
+  p = NEParser.new
+  p.parse(ARGV)
+  puts "output: #{p}"
 end
