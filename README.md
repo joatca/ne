@@ -20,78 +20,78 @@ $ crystal build ne.cr --release
 By default `ne` accepts node expressions as arguments separated by
 operators and outputs the result as an optimal node expression:
 
-$ ne foo[1,2,4,5,6,8]
-foo[1-2,4-6,8]
+    $ ne foo[1,2,4,5,6,8]
+    foo[1-2,4-6,8]
 
 "+" means set union, overlapping ranges will be merged:
 
-$ ne foo[1-5] + foo[4-8]
-foo[1-8]
+    $ ne foo[1-5] + foo[4-8]
+    foo[1-8]
 
 "-" means set difference (it's legal to subtract something that's not
 in the first expression):
 
-$ ne foo[1-8] - foo[6-12]
-foo[1-5]
+    $ ne foo[1-8] - foo[6-12]
+    foo[1-5]
 
 "^" means the intersection of two expressions: nodes that are in both:
 
-$ ne foo[1-12] ^ foo[8-20]
-foo[8-12]
+    $ ne foo[1-12] ^ foo[8-20]
+    foo[8-12]
 
 Expressions can be chained, and are evaluated strictly left-to-right
 without precedence:
 
-$ ne foo[1-12] + foo[8-20] - foo[6-14]
-foo[1-5,15-20]
+    $ ne foo[1-12] + foo[8-20] - foo[6-14]
+    foo[1-5,15-20]
 
 Change the group separator:
 
-$ ne -g, foo[1-5] bar[1-5]
-foo[1-5],bar[1-5]
+    $ ne -g, foo[1-5] bar[1-5]
+    foo[1-5],bar[1-5]
 
 You can output results as individual node names ("expanded"). For
 newline separated:
 
-$ ne -n foo[50-54]
-foo50
-foo51
-foo52
-foo53
-foo54
+    $ ne -n foo[50-54]
+    foo50
+    foo51
+    foo52
+    foo53
+    foo54
 
 Or use a specific separator:
 
-$ ne -s, foo[50-54]
-foo50,foo51,foo52,foo53,foo54
+    $ ne -s, foo[50-54]
+    foo50,foo51,foo52,foo53,foo54
 
 Multiple node name prefixes are supported:
 
-$ ne foo[1-5] + foo[4-8] + bar[6-10]
-foo[1-8] bar[6-10]
+    $ ne foo[1-5] + foo[4-8] + bar[6-10]
+    foo[1-8] bar[6-10]
 
 You can output an arbitrary prefix before each group (useful with pdsh):
 
-$ ne -p"-w " foo[1-5] + bar[6-10]
--w foo[1-5] -w bar[6-10]
+    $ ne -p"-w " foo[1-5] + bar[6-10]
+    -w foo[1-5] -w bar[6-10]
 
 Node expressions can be read from a file:
 
-$ echo "foo1 foo2 foo3" >nodes.txt
-$ ne @nodes.txt + foo[6-10]
-foo[1-3,6-10]
+    $ echo "foo1 foo2 foo3" >nodes.txt
+    $ ne @nodes.txt + foo[6-10]
+    foo[1-3,6-10]
 
 "@" alone means the standard input:
 
-$ echo "foo[2-11]" | ne foo[1-12] - @
-foo[1,12]
+    $ echo "foo[2-11]" | ne foo[1-12] - @
+    foo[1,12]
 
 "@@" also reads a file or standard input, but scans arbitrary text
 looking for words that look like node names (this can obviously be
 unreliable) and returns the union:
 
-$ echo "this is a line that contains the node names foo12 and foo13" | ne @@
-foo[12-13]
+    $ echo "this is a line that contains the node names foo12 and foo13" | ne @@
+    foo[12-13]
 
 ## Development
 
