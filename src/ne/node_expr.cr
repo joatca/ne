@@ -22,13 +22,9 @@ module Ne
     
     @nodes = Hash(String, Set(UInt32)).new { |h, prefix| h[prefix] = Set(UInt32).new }
 
-    def initialize
+    def initialize(@config : Config)
     end
 
-    def initialize(expr : String)
-      parse(expr)
-    end
-    
     def parse(expr : String)
       @expr = expr
       if md = expr.match(/^([[:alpha:]]{1,9})([[:digit:]]{1,9})/)
@@ -92,9 +88,29 @@ module Ne
     end
     
     def to_s(io : IO)
+      if @config.compressed
+        write_compressed(io)
+      else
+        write_uncompressed(io)
+      end
+    end
+
+    def write_uncompressed(io : IO)
       first = true
       @nodes.each do |prefix, numbers|
-        io << ' ' unless first
+        numbers.to_a.sort.each do |number|
+          io << @config.node_sep unless first
+          first = false
+          io << prefix << number
+        end
+      end
+    end
+    
+    def write_compressed(io : IO)
+      first = true
+      @nodes.each do |prefix, numbers|
+        io << @config.group_prefix
+        io << @config.group_sep unless first
         next if numbers.size == 0
         io << prefix
         if numbers.size == 1

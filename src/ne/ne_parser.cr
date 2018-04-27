@@ -34,8 +34,8 @@ module Ne
       { /^\s+/, Operator::UNION },
     ]
           
-    def initialize
-      @expr = NodeExpr.new
+    def initialize(@config : Config)
+      @expr = NodeExpr.new(@config)
       @operator = Operator::UNION
     end
 
@@ -60,7 +60,7 @@ module Ne
           end
         end
         raise ArgumentError.new("syntax error at \"#{clean}\"") if operator == Operator::NONE
-        next_expr = NodeExpr.new
+        next_expr = NodeExpr.new(@config)
         expr_match = next_expr.parse(clean)
         clean = expr_match.post_match
         case operator

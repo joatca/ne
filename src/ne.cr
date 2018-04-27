@@ -18,7 +18,8 @@ require "./ne/*"
 
 # TODO: Write documentation for `Ne`
 module Ne
-  p = NEParser.new
+  config = Config.new
+  p = NEParser.new(config)
   p.parse(ARGV)
   puts "output: #{p}"
 end

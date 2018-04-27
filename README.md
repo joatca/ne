@@ -45,6 +45,11 @@ without precedence:
 $ ne foo[1-12] + foo[8-20] - foo[6-14]
 foo[1-5,15-20]
 
+Change the group separator:
+
+$ ne -g, foo[1-5] bar[1-5]
+foo[1-5],bar[1-5]
+
 You can output results as individual node names ("expanded"). For
 newline separated:
 
