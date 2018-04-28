@@ -109,8 +109,8 @@ module Ne
     def write_compressed(io : IO)
       first = true
       @nodes.each do |prefix, numbers|
-        io << @config.group_prefix
         io << @config.group_sep unless first
+        io << @config.group_prefix
         next if numbers.size == 0
         io << prefix
         if numbers.size == 1
