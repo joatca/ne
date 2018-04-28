@@ -65,36 +65,33 @@ module Ne
                    end
 
       OptionParser.parse! do |parser|
-        parser.banner = "Usage: #{PROGRAM_NAME} [options] node-expression..."
-        parser.on("-gSEPARATOR", "output node groups separated by SEPARATOR") { |g|
+        parser.banner = "Usage: #{PROGRAM_NAME} [options] node-expression...\n\nOption defaults can be set with the indicated environment variables\n"
+        parser.on("-gSEPARATOR", "output node groups separated by SEPARATOR (NE_GROUP_SEPARATOR)") { |g|
           @compressed = true
           @group_sep = g
         }
-        parser.on("-pPREFIX", "print PREFIX before each node group") { |p|
+        parser.on("-pPREFIX", "print PREFIX before each node group (NE_GROUP_PREFIX)") { |p|
           @group_prefix = p
         }
-        parser.on("-e", "output individual nodes instead of node expressions (expanded mode)") {
+        parser.on("-e", "output individual nodes instead of node expressions (NE_EXPANDED_OUTPUT=1)") {
           @compressed = false
         }
-        parser.on("-n", "in expanded output, separate nodes with newlines") {
-          @node_sep = "\n"
-        }
-        parser.on("-sSEPARATOR", "in expanded output, separate nodes with SEPARATOR") { |s|
+        parser.on("-sSEPARATOR", "in expanded output, change newlines to SEPARATOR (NE_NODE_SEPARATOR)") { |s|
           @node_sep = s
         }
-        parser.on("-dDIGITS", "pad output node names to at least DIGITS digits") { |d|
+        parser.on("-dDIGITS", "pad output node names to at least DIGITS digits (NE_PAD_DIGITS)") { |d|
           pad_digits = d.to_u32
         }
-        parser.on("--min-prefix=LENGTH", "minimum node name prefix recognized is LENGTH (default #{min_prefix})") { |l|
+        parser.on("--min-prefix=LENGTH", "minimum node name prefix recognized is LENGTH (NE_MIN_PREFIX_LENGTH, default #{min_prefix})") { |l|
           min_prefix = l.to_u32
         }
-        parser.on("--max-prefix=LENGTH", "maximum node name prefix recognized is LENGTH (default #{max_prefix})") { |l|
+        parser.on("--max-prefix=LENGTH", "maximum node name prefix recognized is LENGTH (NE_MAX_PREFIX_LENGTH, default #{max_prefix})") { |l|
           max_prefix = l.to_u32
         }
-        parser.on("--min-digits=LENGTH", "minimum node name digits recognized is LENGTH (default #{min_digits})") { |l|
+        parser.on("--min-digits=LENGTH", "minimum node digits recognized is LENGTH (NE_MIN_DIGITS, default #{min_digits})") { |l|
           min_digits = l.to_u32
         }
-        parser.on("--max-digits=LENGTH", "maximum node name digits recognized is LENGTH (default #{max_digits})") { |l|
+        parser.on("--max-digits=LENGTH", "maximum node digits recognized is LENGTH (NE_MAX_DIGITS, default #{max_digits})") { |l|
           max_digits = l.to_u32
         }
         parser.on("-h", "--help", "Show this help") {
