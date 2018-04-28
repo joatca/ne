@@ -18,9 +18,9 @@ require "./ne/*"
 
 # TODO: Write documentation for `Ne`
 module Ne
-  config = Config.new
-  p = NEParser.new(config)
   begin
+    config = Config.new
+    p = NEParser.new(config)
     p.parse(ARGV)
     puts p
   rescue e : ArgumentError
