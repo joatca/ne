@@ -22,6 +22,7 @@ module Ne
 
     getter compressed, group_sep, group_prefix, node_sep
     getter prefix_re, digits_re
+    getter digit_format
     
     def initialize
       @group_sep = " " # when printing multiple prefix groups
@@ -32,6 +33,7 @@ module Ne
       max_prefix = 5_u32 # max prefix length
       min_digits = 1_u32
       max_digits = 5_u32
+      pad_digits = 1_u32
 
       OptionParser.parse! do |parser|
         parser.banner = "Usage: #{PROGRAM_NAME} [options] node-expression..."
@@ -50,6 +52,13 @@ module Ne
           @compressed = false
           @node_sep = s
         }
+        parser.on("-sSEPARATOR", "output individual nodes separated by SEPARATOR") { |s|
+          @compressed = false
+          @node_sep = s
+        }
+        parser.on("-dDIGITS", "pad output node names to at least DIGITS digits") { |d|
+          pad_digits = d.to_u32
+        }
         parser.on("--min-prefix=LENGTH", "minimum node name prefix recognized is LENGTH (default #{min_prefix})") { |l|
           min_prefix = l.to_u32
         }
@@ -61,10 +70,6 @@ module Ne
         }
         parser.on("--max-digits=LENGTH", "maximum node name digits recognized is LENGTH (default #{max_digits})") { |l|
           max_digits = l.to_u32
-        }
-        parser.on("-sSEPARATOR", "output individual nodes separated by SEPARATOR") { |s|
-          @compressed = false
-          @node_sep = s
         }
         parser.on("-h", "--help", "Show this help") {
           puts parser
@@ -83,6 +88,7 @@ module Ne
       end
       @prefix_re = /[[:alpha:]]{#{min_prefix},#{max_prefix}}/
       @digits_re = /[[:digit:]]{#{min_digits},#{max_digits}}/
+      @digit_format = "%0#{pad_digits}d"
     end
     
   end

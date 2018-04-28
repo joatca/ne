@@ -103,9 +103,11 @@ module Ne
     
     def range_to_s(s : UInt32, e : UInt32, io : IO)
       if s == e
-        io << s
+        io.printf(@config.digit_format, s)
       else
-        io << s << "-" << e
+        io.printf(@config.digit_format, s)
+        io << '-'
+        io.printf(@config.digit_format, e)
       end
     end
     
@@ -123,7 +125,8 @@ module Ne
         numbers.to_a.sort.each do |number|
           io << @config.node_sep unless first
           first = false
-          io << prefix << number
+          io << prefix
+          io.printf(@config.digit_format, number)
         end
       end
     end
