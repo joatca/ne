@@ -75,22 +75,11 @@ You can output an arbitrary prefix before each group (useful with pdsh):
     $ ne -p"-w " foo[1-5] + bar[6-10]
     -w foo[1-5] -w bar[6-10]
 
-Node expressions can be read from a file:
-
-    $ echo "foo1 foo2 foo3" >nodes.txt
-    $ ne @nodes.txt + foo[6-10]
-    foo[1-3,6-10]
-
-"@" alone means the standard input:
-
-    $ echo "foo[2-11]" | ne foo[1-12] - @
-    foo[1,12]
-
-"@@" also reads a file or standard input, but scans arbitrary text
+"@" reads a file or standard input, scanning arbitrary text
 looking for words that look like node names (this can obviously be
 unreliable) and returns the union:
 
-    $ echo "this is a line that contains the node names foo12 and foo13" | ne @@
+    $ echo "this is a line that contains the node names foo12 and foo13" | ne @
     foo[12-13]
 
 ## Development
