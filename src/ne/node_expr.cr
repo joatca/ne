@@ -32,8 +32,8 @@ module Ne
         return md
       end
       if md = expr.match(/^([[:alpha:]]{1,9})\[([-,[:digit:]]+)\]/)
-        prefix = $1
-        chunks = $2.split(',')
+        prefix = md[1]
+        chunks = md[2].split(',')
         chunks.each do |chunk|
           case chunk
           when /^([[:digit:]]{1,9})$/
