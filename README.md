@@ -13,7 +13,7 @@ of decimal numbers.
 Install Crystal per these instructions:
 https://crystal-lang.org/docs/installation/
 
-$ crystal build ne.cr --release
+$ crystal build src/ne.cr --release
 
 ## Usage
 
