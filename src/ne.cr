@@ -21,5 +21,5 @@ module Ne
   config = Config.new
   p = NEParser.new(config)
   p.parse(ARGV)
-  puts "output: #{p}"
+  puts p
 end
