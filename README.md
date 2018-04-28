@@ -28,6 +28,10 @@ operators and outputs the result as an optimal node expression:
     $ ne foo[1-5] + foo[4-8]
     foo[1-8]
 
+"+" is implied so `foo[1-5]+foo[4-8]` and `foo[1-5] foo[4-8]` are equivalent.
+
+Spaces are only significant when the operator is implied. `foo[1-4]+foo[4-8]` and `foo[1-4] + foo[4-8]` are equivalent but `foo[1-4]foo[4-8]` is illegal.
+
 "-" means set difference (it's legal to subtract something that's not
 in the first expression):
 
@@ -50,20 +54,26 @@ Change the group separator:
     $ ne -g, foo[1-5] bar[1-5]
     foo[1-5],bar[1-5]
 
+(Or use environment variable `NE_GROUP_SEPARATOR`.)
+
 You can output results as individual node names ("expanded"). For
 newline separated:
 
-    $ ne -n foo[50-54]
+    $ ne -e foo[50-54]
     foo50
     foo51
     foo52
     foo53
     foo54
 
+(Or set environment variable `NE_EXPANDED_OUTPUT=something`.)
+
 Or use a specific separator:
 
-    $ ne -s, foo[50-54]
+    $ ne -e -s, foo[50-54]
     foo50,foo51,foo52,foo53,foo54
+
+(Or use environment variable `NE_NODE_SEPARATOR`.)
 
 Multiple node name prefixes are supported:
 
@@ -75,10 +85,14 @@ You can output an arbitrary prefix before each group (useful with pdsh):
     $ ne -p"-w " foo[1-5] + bar[6-10]
     -w foo[1-5] -w bar[6-10]
 
+(Or use environment variable `NE_GROUP_PREFIX`.)
+
 Pad up to a minimum number of digits:
 
     $ ne -d4 foo[1-5]
-	foo[0001-0005]
+    foo[0001-0005]
+
+(Or use environment variable `NE_PAD_DIGITS`.)
 
 "@" reads a file or standard input, scanning arbitrary text
 looking for words that look like node names (this can obviously be

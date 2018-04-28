@@ -20,20 +20,49 @@ module Ne
 
   class Config
 
+    @group_sep : String
+    @group_prefix : String
+    @node_sep : String
+    @compressed : Bool    
+
     getter compressed, group_sep, group_prefix, node_sep
     getter prefix_re, digits_re
     getter digit_format
     
     def initialize
-      @group_sep = " " # when printing multiple prefix groups
-      @group_prefix = "" # print before each prefix group
-      @node_sep = "\n" # when printing individual nodes in uncompressed mode
-      @compressed = true # show as foo[1-5] or foo1 foo2 foo3 foo4 foo5
-      min_prefix = 1_u32 # min prefix length
-      max_prefix = 5_u32 # max prefix length
-      min_digits = 1_u32
-      max_digits = 5_u32
-      pad_digits = 1_u32
+      # when printing multiple prefix groups
+      @group_sep = ENV.fetch("NE_GROUP_SEPARATOR", " ")
+      # print before each prefix group
+      @group_prefix = ENV.fetch("NE_GROUP_PREFIX", "")
+      # when printing individual nodes in uncompressed mode
+      @node_sep = ENV.fetch("NE_NODE_SEPARATOR", "\n")
+      # show as foo[1-5] or foo1 foo2 foo3 foo4 foo5
+      @compressed = ENV.has_key?("NE_EXPANDED_OUTPUT") ? false : true
+      min_prefix = begin
+                     ENV.fetch("NE_MIN_PREFIX_LENGTH", "").to_u32
+                   rescue ArgumentError
+                     1_u32
+                   end
+      max_prefix = begin
+                     ENV.fetch("NE_MAX_PREFIX_LENGTH", "").to_u32
+                   rescue ArgumentError
+                     5_u32
+                   end
+      min_digits = begin
+                     ENV.fetch("NE_MIN_DIGITS", "").to_u32
+                   rescue ArgumentError
+                     1_u32
+                   end
+      max_digits = begin
+                     ENV.fetch("NE_MAX_DIGITS", "").to_u32
+                   rescue ArgumentError
+                     5_u32
+                   end
+      pad_digits = begin
+                     ENV.fetch("NE_PAD_DIGITS", "").to_u32
+                   rescue ArgumentError
+                     1_u32
+                   end
 
       OptionParser.parse! do |parser|
         parser.banner = "Usage: #{PROGRAM_NAME} [options] node-expression..."
@@ -44,16 +73,13 @@ module Ne
         parser.on("-pPREFIX", "print PREFIX before each node group") { |p|
           @group_prefix = p
         }
-        parser.on("-n", "output individual nodes separated by newlines") {
+        parser.on("-e", "output individual nodes instead of node expressions (expanded mode)") {
           @compressed = false
+        }
+        parser.on("-n", "in expanded output, separate nodes with newlines") {
           @node_sep = "\n"
         }
-        parser.on("-sSEPARATOR", "output individual nodes separated by SEPARATOR") { |s|
-          @compressed = false
-          @node_sep = s
-        }
-        parser.on("-sSEPARATOR", "output individual nodes separated by SEPARATOR") { |s|
-          @compressed = false
+        parser.on("-sSEPARATOR", "in expanded output, separate nodes with SEPARATOR") { |s|
           @node_sep = s
         }
         parser.on("-dDIGITS", "pad output node names to at least DIGITS digits") { |d|
