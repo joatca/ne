@@ -20,6 +20,10 @@ require "./ne/*"
 module Ne
   config = Config.new
   p = NEParser.new(config)
-  p.parse(ARGV)
-  puts p
+  begin
+    p.parse(ARGV)
+    puts p
+  rescue e : ArgumentError
+    STDERR.puts "#{PROGRAM_NAME}: #{e.message}"
+  end
 end
