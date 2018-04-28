@@ -27,18 +27,22 @@ module Ne
 
     def parse(expr : String)
       @expr = expr
-      if md = expr.match(/^([[:alpha:]]{1,9})([[:digit:]]{1,9})/)
+      if md = expr.match(/^@(\S*)/)
+        scan_file(md[1])
+        return md
+      end
+      if md = expr.match(/^(#{@config.prefix_re})(#{@config.digits_re})/)
         @nodes[$1] << $2.to_u32
         return md
       end
-      if md = expr.match(/^([[:alpha:]]{1,9})\[([-,[:digit:]]+)\]/)
+      if md = expr.match(/^(#{@config.prefix_re})\[([-,[:digit:]]+)\]/)
         prefix = md[1]
         chunks = md[2].split(',')
         chunks.each do |chunk|
           case chunk
-          when /^([[:digit:]]{1,9})$/
+          when /^(#{@config.digits_re})$/
             @nodes[prefix] << $1.to_u32
-          when /^([[:digit:]]{1,9})-([[:digit:]]{1,9})$/
+          when /^(#{@config.digits_re})-(#{@config.digits_re})$/
             s, e = $1.to_u32, $2.to_u32
             raise ArgumentError.new("first number in range #{chunk} in \"#{expr}\" is greater than second") if s > e
             (s..e).each { |num| @nodes[prefix] << num }
@@ -49,6 +53,24 @@ module Ne
         return md
       else
         raise ArgumentError.new("invalid node expression \"#{expr}\"")
+      end
+    end
+
+    def scan_file(filename : String)
+      if filename == ""
+        scan_io(STDIN)
+      else
+        File.open(filename, "r") do |fio|
+          scan_io(fio)
+        end
+      end
+    end
+
+    def scan_io(io : IO)
+      io.each_line do |line|
+        line.scan(/(#{@config.prefix_re})(#{@config.digits_re})/) do |match|
+          @nodes[match[1]] << match[2].to_u32
+        end
       end
     end
     
