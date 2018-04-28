@@ -75,6 +75,11 @@ You can output an arbitrary prefix before each group (useful with pdsh):
     $ ne -p"-w " foo[1-5] + bar[6-10]
     -w foo[1-5] -w bar[6-10]
 
+Pad up to a minimum number of digits:
+
+    $ ne -d4 foo[1-5]
+	foo[0001-0005]
+
 "@" reads a file or standard input, scanning arbitrary text
 looking for words that look like node names (this can obviously be
 unreliable) and returns the union:
