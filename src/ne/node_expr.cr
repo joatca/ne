@@ -32,7 +32,7 @@ module Ne
         return md
       end
       if md = expr.match(/^(#{@config.prefix_re})(#{@config.digits_re})/)
-        @nodes[$1] << $2.to_u32
+        @nodes[md[1]] << md[2].to_u32
         return md
       end
       if md = expr.match(/^(#{@config.prefix_re})\[([-,[:digit:]]+)\]/)
@@ -139,7 +139,7 @@ module Ne
         next if numbers.size == 0
         io << prefix
         if numbers.size == 1
-          io << numbers.first
+          io.printf(@config.digit_format, numbers.first)
         else
           io << '['
           sequence = numbers.to_a.sort
